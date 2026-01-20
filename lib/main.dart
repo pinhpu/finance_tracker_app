@@ -22,7 +22,6 @@ void main() async {
     }
   } catch (e) {
     debugPrint("Error checking PIN: $e");
-    // Nếu lỗi (ví dụ chưa build lại app sau khi thêm package), cứ vào màn hình chính
   }
 
   runApp(MyApp(startScreen: startScreen));
@@ -42,7 +41,7 @@ class MyApp extends StatelessWidget {
         primaryColor: AppColors.primary,
         useMaterial3: true,
       ),
-      home: startScreen, // Start based on PIN check
+      home: startScreen,
     );
   }
 }
@@ -56,7 +55,6 @@ class MainScaffold extends StatefulWidget {
 class _MainScaffoldState extends State<MainScaffold> {
   int _index = 0;
 
-  // Tạo GlobalKey để truy cập state của HomeScreen và StatisticsScreen
   final GlobalKey<HomeScreenState> _homeKey = GlobalKey<HomeScreenState>();
   final GlobalKey<StatisticsScreenState> _statsKey =
       GlobalKey<StatisticsScreenState>();
@@ -70,7 +68,7 @@ class _MainScaffoldState extends State<MainScaffold> {
       HomeScreen(key: _homeKey),
       StatisticsScreen(key: _statsKey),
       const SizedBox(),
-      const Center(child: Text("Profile")),
+      const Center(child: Text("No Content")),
       const SettingsScreen(),
     ];
   }

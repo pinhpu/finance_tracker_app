@@ -60,7 +60,7 @@ class StatisticsScreenState extends State<StatisticsScreen> {
   void _onPeriodChanged(String period) {
     setState(() {
       _selectedPeriod = period;
-      _isLoading = true; // Show loading while recalculating
+      _isLoading = true;
     });
     _loadStats();
   }
@@ -307,7 +307,6 @@ class StatisticsScreenState extends State<StatisticsScreen> {
         return GestureDetector(
           onTap: () {
             setState(() {
-              // Toggle selection: if clicking same item, deselect it
               if (_selectedIndex == index) {
                 _selectedIndex = -1;
               } else {

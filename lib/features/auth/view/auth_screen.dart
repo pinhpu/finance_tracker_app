@@ -1,9 +1,10 @@
+import 'package:finance_tracker_app/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import '../../../../main.dart'; // Import MainScaffold
 import '../controller/auth_controller.dart';
 
 class AuthScreen extends StatefulWidget {
-  final bool isSetupMode; // true: đặt PIN mới, false: đăng nhập
+  final bool isSetupMode;
   const AuthScreen({super.key, this.isSetupMode = false});
 
   @override
@@ -13,15 +14,11 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   String _pin = '';
   String _confirmPin = '';
-  bool _isConfirming = false; // Chỉ dùng khi setup
+  bool _isConfirming = false;
   final AuthController _controller = AuthController();
 
   @override
   Widget build(BuildContext context) {
-    // Nếu force login mode nhưng chưa có mã PIN thì vào Main luôn (để tránh lỗi)
-    // Nhưng thông thường main.dart sẽ check trước.
-    // Ở đây ta cứ assume logic đúng.
-
     String title = '';
     String subTitle = '';
 
@@ -44,7 +41,7 @@ class _AuthScreenState extends State<AuthScreen> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFF2D9596), Color(0xFF1A6B6D)],
+            colors: [AppColors.primaryLight, AppColors.primary],
           ),
         ),
         child: SafeArea(
@@ -82,7 +79,6 @@ class _AuthScreenState extends State<AuthScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(4, (index) {
-                  // Hiển thị dot trắng nếu đã nhập
                   final length = widget.isSetupMode
                       ? (_isConfirming ? _confirmPin.length : _pin.length)
                       : _pin.length;
@@ -93,9 +89,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     height: 20,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: index < length
-                          ? Colors.white
-                          : Colors.white.withOpacity(0.3),
+                      color: index < length ? Colors.white : Colors.white30,
                       border: Border.all(color: Colors.white, width: 2),
                     ),
                   );
@@ -204,14 +198,13 @@ class _AuthScreenState extends State<AuthScreen> {
         height: 80,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
+          border: Border.all(color: Colors.white30, width: 1),
         ),
         child: Center(child: child),
       ),
     );
   }
 
-  // Xử lý khi đặt PIN mới
   Future<void> _handlePinConfirmation() async {
     if (_pin == _confirmPin) {
       final success = await _controller.setupPin(_pin);
@@ -242,14 +235,13 @@ class _AuthScreenState extends State<AuthScreen> {
     } else {
       _showError('PINs do not match. Please try again.');
       setState(() {
-        _pin = '';
+        // _pin = '';
         _confirmPin = '';
-        _isConfirming = false;
+        _isConfirming = true;
       });
     }
   }
 
-  // Xử lý khi đăng nhập
   Future<void> _verifyPin() async {
     final isValid = await _controller.verifyPin(_pin);
     if (isValid && mounted) {
