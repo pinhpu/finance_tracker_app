@@ -17,10 +17,11 @@ class StatisticController {
     List<String> labels = [];
 
     final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
 
     switch (period) {
       case 'Day':
-        final sevenDaysAgo = now.subtract(const Duration(days: 6));
+        final sevenDaysAgo = today.subtract(const Duration(days: 6));
         final Map<int, double> dailyTotals = {};
         final Map<int, String> dayLabels = {};
 
@@ -31,8 +32,14 @@ class StatisticController {
         }
 
         for (var t in filteredForChart) {
-          if (t.date.isAfter(sevenDaysAgo.subtract(const Duration(days: 1)))) {
-            final dayDiff = t.date.difference(sevenDaysAgo).inDays;
+          final transactionDate = DateTime(
+            t.date.year,
+            t.date.month,
+            t.date.day,
+          );
+          if (!transactionDate.isBefore(sevenDaysAgo) &&
+              !transactionDate.isAfter(today)) {
+            final dayDiff = transactionDate.difference(sevenDaysAgo).inDays;
             if (dayDiff >= 0 && dayDiff < 7) {
               dailyTotals[dayDiff] = (dailyTotals[dayDiff] ?? 0) + t.amount;
             }
@@ -46,7 +53,7 @@ class StatisticController {
         break;
 
       case 'Week':
-        final fourWeeksAgo = now.subtract(const Duration(days: 28));
+        final fourWeeksAgo = today.subtract(const Duration(days: 27));
         final Map<int, double> weeklyTotals = {};
         final Map<int, String> weekLabels = {};
 
@@ -57,8 +64,15 @@ class StatisticController {
         }
 
         for (var t in filteredForChart) {
-          if (t.date.isAfter(fourWeeksAgo.subtract(const Duration(days: 1)))) {
-            final weekDiff = t.date.difference(fourWeeksAgo).inDays ~/ 7;
+          final transactionDate = DateTime(
+            t.date.year,
+            t.date.month,
+            t.date.day,
+          );
+          if (!transactionDate.isBefore(fourWeeksAgo) &&
+              !transactionDate.isAfter(today)) {
+            final weekDiff =
+                transactionDate.difference(fourWeeksAgo).inDays ~/ 7;
             if (weekDiff >= 0 && weekDiff < 4) {
               weeklyTotals[weekDiff] = (weeklyTotals[weekDiff] ?? 0) + t.amount;
             }
@@ -84,7 +98,8 @@ class StatisticController {
         for (var t in filteredForChart) {
           final tMonth = DateTime(t.date.year, t.date.month, 1);
           final nowMonth = DateTime(now.year, now.month, 1);
-          final monthDiff = (nowMonth.year - tMonth.year) * 12 +
+          final monthDiff =
+              (nowMonth.year - tMonth.year) * 12 +
               (nowMonth.month - tMonth.month);
 
           if (monthDiff >= 0 && monthDiff < 7) {
@@ -127,12 +142,11 @@ class StatisticController {
         labels = yearLabels.values.toList();
         break;
     }
-    
+
     // Filter for the list below chart (Top Spending logic)
-    final filteredForList = transactions
-        .where((t) => isExpense ? !t.isIncome : t.isIncome)
-        .toList()
-      ..sort((a, b) => b.amount.compareTo(a.amount));
+    final filteredForList =
+        transactions.where((t) => isExpense ? !t.isIncome : t.isIncome).toList()
+          ..sort((a, b) => b.amount.compareTo(a.amount));
 
     return {
       'transactions': transactions,

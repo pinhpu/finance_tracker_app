@@ -226,13 +226,18 @@ class HomeScreenState extends State<HomeScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: const [
-                    Text(
-                      "Total Balance ^",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          "Total Balance",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Icon(Icons.keyboard_arrow_up, color: Colors.white),
+                      ],
                     ),
                     Icon(Icons.more_horiz, color: Colors.white),
                   ],

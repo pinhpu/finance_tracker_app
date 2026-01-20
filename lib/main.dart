@@ -12,24 +12,24 @@ import 'features/auth/controller/auth_controller.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  Widget startScreen = const MainScaffold();
+  String initialRoute = '/home';
 
   try {
     final authController = AuthController();
     final hasPin = await authController.hasPin();
     if (hasPin) {
-      startScreen = const AuthScreen();
+      initialRoute = '/auth';
     }
   } catch (e) {
     debugPrint("Error checking PIN: $e");
   }
 
-  runApp(MyApp(startScreen: startScreen));
+  runApp(MyApp(initialRoute: initialRoute));
 }
 
 class MyApp extends StatelessWidget {
-  final Widget startScreen;
-  const MyApp({super.key, required this.startScreen});
+  final String initialRoute;
+  const MyApp({super.key, required this.initialRoute});
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +41,12 @@ class MyApp extends StatelessWidget {
         primaryColor: AppColors.primary,
         useMaterial3: true,
       ),
-      home: startScreen,
+      initialRoute: initialRoute,
+      routes: {
+        '/home': (context) => const MainScaffold(),
+        '/auth': (context) => const AuthScreen(),
+        '/add_transaction': (context) => const AddTransactionScreen(),
+      },
     );
   }
 }
@@ -55,7 +60,6 @@ class MainScaffold extends StatefulWidget {
 class _MainScaffoldState extends State<MainScaffold> {
   int _index = 0;
 
-  final GlobalKey<HomeScreenState> _homeKey = GlobalKey<HomeScreenState>();
   final GlobalKey<StatisticsScreenState> _statsKey =
       GlobalKey<StatisticsScreenState>();
 
@@ -65,7 +69,7 @@ class _MainScaffoldState extends State<MainScaffold> {
   void initState() {
     super.initState();
     _screens = [
-      HomeScreen(key: _homeKey),
+      const HomeScreen(),
       StatisticsScreen(key: _statsKey),
       const SizedBox(),
       const Center(child: Text("No Content")),
@@ -79,14 +83,7 @@ class _MainScaffoldState extends State<MainScaffold> {
       body: _screens[_index],
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          final result = await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const AddTransactionScreen()),
-          );
-
-          if (result == true) {
-            _homeKey.currentState?.refreshData();
-          }
+          await Navigator.pushNamed(context, '/add_transaction');
         },
         backgroundColor: AppColors.primary,
         shape: const CircleBorder(),

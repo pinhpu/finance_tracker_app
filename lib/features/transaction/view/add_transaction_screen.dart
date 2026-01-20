@@ -170,7 +170,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                             ),
                             inputFormatters: [
                               FilteringTextInputFormatter.allow(
-                                RegExp(r'^\d*\.?\d{0,2}$'),
+                                RegExp(r'^\\d*\\.?\\d{0,2}\$'),
                               ),
                             ],
                             decoration: const InputDecoration(
@@ -325,7 +325,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     await _controller.addTransaction(tx);
 
     if (mounted) {
-      Navigator.pop(context, true);
+      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
     }
   }
 
